@@ -1,0 +1,979 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeuroNotes | ADHD-Friendly Learning Platform</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #5e35b1;
+            --secondary: #3949ab;
+            --accent: #7e57c2;
+            --focus: #ff7043;
+            --success: #43a047;
+            --light: #f5f7ff;
+            --dark: #1a237e;
+            --gradient: linear-gradient(135deg, var(--primary), var(--secondary));
+            --focus-gradient: linear-gradient(135deg, var(--focus), #ff9800);
+            --card-bg: #ffffff;
+            --border: #d1c4e9;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(to bottom, #e3f2fd, #f3e5f5);
+            color: #333;
+            line-height: 1.6;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* Header */
+        header {
+            background: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 2px 15px rgba(94, 53, 177, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(5px);
+        }
+        
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            font-size: 26px;
+            font-weight: 800;
+            color: var(--primary);
+            font-family: 'Montserrat', sans-serif;
+        }
+        
+        .logo i {
+            margin-right: 10px;
+            color: var(--accent);
+        }
+        
+        .nav-links {
+            display: flex;
+            list-style: none;
+        }
+        
+        .nav-links li {
+            margin-left: 25px;
+        }
+        
+        .nav-links a {
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 600;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .nav-links a:after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 3px;
+            background: var(--focus-gradient);
+            border-radius: 3px;
+            transition: width 0.3s ease;
+        }
+        
+        .nav-links a:hover:after {
+            width: 100%;
+        }
+        
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 12px 32px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            font-size: 16px;
+            font-family: 'Poppins', sans-serif;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        
+        .btn-primary {
+            background: var(--gradient);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(94, 53, 177, 0.3);
+        }
+        
+        .btn-focus {
+            background: var(--focus-gradient);
+            color: white;
+        }
+        
+        .btn-focus:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(255, 112, 67, 0.3);
+        }
+        
+        /* Hero Section */
+        .hero {
+            padding: 80px 0 40px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero-content {
+            display: flex;
+            align-items: center;
+            gap: 50px;
+        }
+        
+        .hero-text {
+            flex: 1;
+            z-index: 2;
+        }
+        
+        .hero h1 {
+            font-size: 3.2rem;
+            line-height: 1.2;
+            margin-bottom: 20px;
+            font-family: 'Montserrat', sans-serif;
+            color: var(--dark);
+        }
+        
+        .hero h1 span {
+            background: var(--focus-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: inline-block;
+        }
+        
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            color: #444;
+            max-width: 90%;
+        }
+        
+        .hero-btns {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+        
+        .hero-image {
+            flex: 1;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            z-index: 1;
+        }
+        
+        .hero-card {
+            width: 100%;
+            max-width: 500px;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(94, 53, 177, 0.15);
+            position: relative;
+            overflow: hidden;
+            border: 2px solid var(--border);
+        }
+        
+        .hero-card:before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(126,87,194,0.1) 0%, rgba(255,255,255,0) 70%);
+            z-index: 0;
+        }
+        
+        .card-header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        
+        .card-header h2 {
+            color: var(--primary);
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+        }
+        
+        .card-header p {
+            color: #666;
+        }
+        
+        .interactive-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        
+        .interactive-item {
+            background: var(--light);
+            border-radius: 15px;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            height: 120px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .interactive-item:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent);
+            box-shadow: 0 8px 15px rgba(94, 53, 177, 0.1);
+        }
+        
+        .interactive-item i {
+            font-size: 30px;
+            margin-bottom: 10px;
+            color: var(--accent);
+        }
+        
+        .quiz-container {
+            background: var(--light);
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        
+        .quiz-question {
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: var(--dark);
+        }
+        
+        .quiz-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .quiz-option {
+            background: white;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            padding: 8px 15px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .quiz-option:hover {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+        }
+        
+        /* Features */
+        .features {
+            padding: 100px 0;
+            background: white;
+        }
+        
+        .section-title {
+            text-align: center;
+            font-size: 2.8rem;
+            margin-bottom: 15px;
+            font-family: 'Montserrat', sans-serif;
+            color: var(--dark);
+        }
+        
+        .section-title span {
+            background: var(--focus-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .section-subtitle {
+            text-align: center;
+            font-size: 1.2rem;
+            color: #666;
+            max-width: 800px;
+            margin: 0 auto 60px;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+        
+        .feature-card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(94, 53, 177, 0.08);
+            transition: all 0.4s ease;
+            border: 2px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(94, 53, 177, 0.15);
+            border-color: var(--accent);
+        }
+        
+        .feature-icon {
+            width: 70px;
+            height: 70px;
+            background: var(--gradient);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 25px;
+            color: white;
+            font-size: 30px;
+        }
+        
+        .feature-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: var(--dark);
+        }
+        
+        .feature-card p {
+            color: #555;
+            margin-bottom: 20px;
+        }
+        
+        /* Psychology Section */
+        .psychology {
+            padding: 100px 0;
+            background: linear-gradient(135deg, #e3f2fd, #f3e5f5);
+        }
+        
+        .psych-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+        
+        .psych-card {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(94, 53, 177, 0.08);
+            transition: all 0.4s ease;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+        
+        .psych-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(94, 53, 177, 0.15);
+        }
+        
+        .psych-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .psych-card h3 i {
+            color: var(--focus);
+        }
+        
+        /* CTA */
+        .cta {
+            padding: 100px 0;
+            background: var(--gradient);
+            color: white;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .cta:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 320'%3E%3Cpath fill='%23ffffff' fill-opacity='0.1' d='M0,160L48,170.7C96,181,192,203,288,197.3C384,192,480,160,576,138.7C672,117,768,107,864,122.7C960,139,1056,181,1152,181.3C1248,181,1344,139,1392,117.3L1440,96L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z'%3E%3C/path%3E%3C/svg%3E");
+            background-size: cover;
+            opacity: 0.2;
+        }
+        
+        .cta h2 {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            position: relative;
+        }
+        
+        .cta p {
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin: 0 auto 40px;
+            opacity: 0.9;
+            position: relative;
+        }
+        
+        /* Testimonials */
+        .testimonials {
+            padding: 100px 0;
+            background: white;
+        }
+        
+        .testimonial-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 50px;
+        }
+        
+        .testimonial-card {
+            background: var(--light);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(94, 53, 177, 0.08);
+            position: relative;
+            border: 2px solid var(--border);
+        }
+        
+        .testimonial-card:before {
+            content: '"';
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            font-size: 5rem;
+            color: var(--accent);
+            opacity: 0.1;
+            font-family: serif;
+        }
+        
+        .testimonial-content {
+            margin-bottom: 20px;
+            color: #555;
+            font-style: italic;
+        }
+        
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .author-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        
+        .author-info h4 {
+            color: var(--dark);
+        }
+        
+        .author-info p {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        /* Footer */
+        footer {
+            background: var(--dark);
+            color: white;
+            padding: 60px 0 30px;
+        }
+        
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            margin-bottom: 40px;
+        }
+        
+        .footer-column {
+            flex: 1;
+            min-width: 200px;
+            margin-bottom: 30px;
+        }
+        
+        .footer-column h3 {
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            position: relative;
+            padding-bottom: 10px;
+        }
+        
+        .footer-column h3:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 50px;
+            height: 2px;
+            background: var(--accent);
+        }
+        
+        .footer-column ul {
+            list-style: none;
+        }
+        
+        .footer-column ul li {
+            margin-bottom: 10px;
+        }
+        
+        .footer-column ul li a {
+            color: #aaa;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .footer-column ul li a:hover {
+            color: white;
+        }
+        
+        .copyright {
+            text-align: center;
+            padding-top: 30px;
+            border-top: 1px solid #333;
+            color: #aaa;
+            font-size: 0.9rem;
+        }
+        
+        /* Animations */
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+        
+        /* Responsive */
+        @media (max-width: 992px) {
+            .hero-content {
+                flex-direction: column;
+            }
+            
+            .hero-text, .hero-image {
+                width: 100%;
+            }
+            
+            .hero-text {
+                text-align: center;
+            }
+            
+            .hero p {
+                max-width: 100%;
+            }
+            
+            .hero-btns {
+                justify-content: center;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .cta h2 {
+                font-size: 2.2rem;
+            }
+            
+            .section-title {
+                font-size: 2.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <nav class="navbar">
+                <a href="#" class="logo">
+                    <i class="fas fa-brain"></i>
+                    NeuroNotes
+                </a>
+                <ul class="nav-links">
+                    <li><a href="#">Home</a></li>
+                    <li><a href="#">Features</a></li>
+                    <li><a href="#">Psychology</a></li>
+                    <li><a href="#">Testimonials</a></li>
+                    <li><a href="#">Pricing</a></li>
+                </ul>
+                <a href="#" class="btn btn-primary">Try Free</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-text">
+                    <h1>Learning Made <span>Irresistible</span> for Busy Minds</h1>
+                    <p>NeuroNotes transforms your study materials into engaging, interactive experiences that capture attention and boost retention for students with Busy Minds.</p>
+                    <div class="hero-btns">
+                        <a href="#" class="btn btn-primary">Transform Your Notes</a>
+                        <a href="#" class="btn btn-focus">See How It Works</a>
+                    </div>
+                </div>
+                <div class="hero-image">
+                    <div class="hero-card">
+                        <div class="card-header">
+                            <h2>Interactive Learning Hub</h2>
+                            <p>Engage with your material in new ways</p>
+                        </div>
+                        
+                        <div class="interactive-grid">
+                            <div class="interactive-item">
+                                <i class="fas fa-puzzle-piece"></i>
+                                <h4>Word Puzzles</h4>
+                            </div>
+                            <div class="interactive-item">
+                                <i class="fas fa-images"></i>
+                                <h4>Visual ID</h4>
+                            </div>
+                            <div class="interactive-item">
+                                <i class="fas fa-question-circle"></i>
+                                <h4>Quick Quiz</h4>
+                            </div>
+                            <div class="interactive-item">
+                                <i class="fas fa-gamepad"></i>
+                                <h4>Knowledge Games</h4>
+                            </div>
+                        </div>
+                        
+                        <div class="quiz-container">
+                            <div class="quiz-question">What part of the cell is known as the powerhouse?</div>
+                            <div class="quiz-options">
+                                <div class="quiz-option">Nucleus</div>
+                                <div class="quiz-option">Mitochondria</div>
+                                <div class="quiz-option">Ribosome</div>
+                                <div class="quiz-option">Endoplasmic Reticulum</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features -->
+    <section class="features">
+        <div class="container">
+            <h2 class="section-title">ADHD-Friendly <span>Learning Tools</span></h2>
+            <p class="section-subtitle">We use psychology-backed techniques to make studying irresistible and effective</p>
+            
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-paint-brush"></i>
+                    </div>
+                    <h3>Visual Transformation</h3>
+                    <p>Convert text-heavy notes into colorful, illustrated presentations with relevant icons and diagrams that capture attention.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-gamepad"></i>
+                    </div>
+                    <h3>Gamified Learning</h3>
+                    <p>Turn studying into a game with points, levels, and rewards for completing topics and quizzes.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <h3>Micro-Learning</h3>
+                    <p>Information broken into bite-sized chunks with progress indicators to prevent overwhelm.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <h3>Instant Feedback</h3>
+                    <p>Real-time quizzes with immediate results and explanations to reinforce learning.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-puzzle-piece"></i>
+                    </div>
+                    <h3>Interactive Puzzles</h3>
+                    <p>Word puzzles and image matching games created from your course material.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-stopwatch"></i>
+                    </div>
+                    <h3>Focus Timer</h3>
+                    <p>Built-in Pomodoro timer with gentle reminders to help maintain concentration.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Psychology Section -->
+    <section class="psychology">
+        <div class="container">
+            <h2 class="section-title">The <span>Psychology</span> Behind Our Approach</h2>
+            <p class="section-subtitle">We leverage cognitive science to create ADHD-friendly learning experiences</p>
+            
+            <div class="psych-grid">
+                <div class="psych-card">
+                    <h3><i class="fas fa-dopamine"></i> Dopamine Engagement</h3>
+                    <p>Our system triggers dopamine release through frequent small achievements, progress tracking, and surprise rewards to maintain motivation.</p>
+                </div>
+                
+                <div class="psych-card">
+                    <h3><i class="fas fa-eye"></i> Visual Anchoring</h3>
+                    <p>Color-coded information, icons, and diagrams create visual anchors that help with information retention and recall.</p>
+                </div>
+                
+                <div class="psych-card">
+                    <h3><i class="fas fa-mouse-pointer"></i> Interactive Encoding</h3>
+                    <p>Active participation through quizzes and puzzles creates stronger memory traces than passive reading.</p>
+                </div>
+                
+                <div class="psych-card">
+                    <h3><i class="fas fa-hourglass-half"></i> Time Perception</h3>
+                    <p>Progress indicators and timers make abstract study time concrete, reducing time-related anxiety.</p>
+                </div>
+                
+                <div class="psych-card">
+                    <h3><i class="fas fa-palette"></i> Color Psychology</h3>
+                    <p>Strategic use of high-contrast colors draws attention to key concepts without overwhelming the senses.</p>
+                </div>
+                
+                <div class="psych-card">
+                    <h3><i class="fas fa-arrows-alt"></i> Reduced Cognitive Load</h3>
+                    <p>Information is chunked and presented with minimal distractions to prevent cognitive overload.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta">
+        <div class="container">
+            <h2>Ready to Transform Your Learning Experience?</h2>
+            <p>Join thousands of students with ADHD who have made studying engaging and effective</p>
+            <a href="#" class="btn btn-focus pulse">Start Your Free Trial</a>
+        </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="testimonials">
+        <div class="container">
+            <h2 class="section-title">Students <span>Love NeuroNotes</span></h2>
+            <p class="section-subtitle">Hear from students with ADHD who transformed their learning experience</p>
+            
+            <div class="testimonial-grid">
+                <div class="testimonial-card">
+                    <div class="testimonial-content">
+                        "I went from barely passing to straight A's! The visual transformations and quizzes made studying something I actually look forward to."
+                    </div>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">SJ</div>
+                        <div class="author-info">
+                            <h4>Sarah Johnson</h4>
+                            <p>Biology Major, ADHD-C</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="testimonial-card">
+                    <div class="testimonial-content">
+                        "The word puzzles created from my lecture notes are genius! I remember terms so much better when I've 'played' with them."
+                    </div>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">MK</div>
+                        <div class="author-info">
+                            <h4>Michael Kim</h4>
+                            <p>Computer Science, ADHD-I</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="testimonial-card">
+                    <div class="testimonial-content">
+                        "Finally a study tool that works WITH my brain instead of against it. The dopamine hits from completing micro-lessons keep me going!"
+                    </div>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">AD</div>
+                        <div class="author-info">
+                            <h4>Alex Davis</h4>
+                            <p>Psychology Student, ADHD-H</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h3>NeuroNotes</h3>
+                    <p>Making learning irresistible for ADHD minds through psychology-backed technology.</p>
+                </div>
+                
+                <div class="footer-column">
+                    <h3>Features</h3>
+                    <ul>
+                        <li><a href="#">Visual Transformation</a></li>
+                        <li><a href="#">Interactive Quizzes</a></li>
+                        <li><a href="#">Word Puzzles</a></li>
+                        <li><a href="#">Focus Tools</a></li>
+                        <li><a href="#">Progress Tracking</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-column">
+                    <h3>Resources</h3>
+                    <ul>
+                        <li><a href="#">ADHD Study Tips</a></li>
+                        <li><a href="#">Teacher Resources</a></li>
+                        <li><a href="#">Research & Science</a></li>
+                        <li><a href="#">Success Stories</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-column">
+                    <h3>Support</h3>
+                    <ul>
+                        <li><a href="#">Contact Us</a></li>
+                        <li><a href="#">FAQ</a></li>
+                        <li><a href="#">Accessibility</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="copyright">
+                &copy; 2023 NeuroNotes. Designed with ❤️ for ADHD learners.
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Interactive quiz option selection
+        const quizOptions = document.querySelectorAll('.quiz-option');
+        
+        quizOptions.forEach(option => {
+            option.addEventListener('click', () => {
+                // Remove any existing selections
+                quizOptions.forEach(opt => opt.style.background = 'white');
+                
+                // Highlight selected option
+                option.style.background = 'var(--accent)';
+                option.style.color = 'white';
+                option.style.borderColor = 'var(--accent)';
+                
+                // Show feedback after delay
+                setTimeout(() => {
+                    if(option.textContent === 'Mitochondria') {
+                        option.innerHTML = '<i class="fas fa-check"></i> Correct!';
+                        option.style.background = 'var(--success)';
+                        option.style.borderColor = 'var(--success)';
+                    } else {
+                        option.innerHTML = '<i class="fas fa-times"></i> Try Again';
+                        option.style.background = '#ff6b6b';
+                        option.style.borderColor = '#ff6b6b';
+                    }
+                }, 300);
+            });
+        });
+        
+        // Interactive items animation
+        const interactiveItems = document.querySelectorAll('.interactive-item');
+        
+        interactiveItems.forEach(item => {
+            item.addEventListener('click', () => {
+                item.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    item.style.transform = '';
+                }, 200);
+                
+                // Show a message about the feature
+                const featureName = item.querySelector('h4').textContent;
+                alert(`Opening ${featureName} experience...`);
+            });
+        });
+        
+        // Feature card hover animations
+        const featureCards = document.querySelectorAll('.feature-card');
+        
+        featureCards.forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                card.style.zIndex = '10';
+            });
+            
+            card.addEventListener('mouseleave', () => {
+                card.style.zIndex = '1';
+            });
+        });
+    </script>
+</body>
+</html>
