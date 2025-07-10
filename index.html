@@ -587,6 +587,62 @@
             font-size: 0.9rem;
         }
         
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .modal.active {
+            display: flex;
+            opacity: 1;
+        }
+        
+        .modal-content {
+            background: #fff;
+            padding: 2rem;
+            border-radius: 1rem;
+            max-width: 500px;
+            width: 90%;
+            position: relative;
+            transform: translateY(-50px);
+            transition: transform 0.3s ease;
+        }
+        
+        .modal.active .modal-content {
+            transform: translateY(0);
+        }
+        
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 28px;
+            cursor: pointer;
+            color: #777;
+            transition: color 0.3s;
+        }
+        
+        .close-modal:hover {
+            color: #333;
+        }
+        
+        .modal h2 {
+            text-align: center;
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+        
         /* Animations */
         @keyframes pulse {
             0% { transform: scale(1); }
@@ -596,6 +652,11 @@
         
         .pulse {
             animation: pulse 2s infinite;
+        }
+        
+        /* Smooth Scrolling */
+        html {
+            scroll-behavior: smooth;
         }
         
         /* Responsive */
@@ -614,6 +675,8 @@
             
             .hero p {
                 max-width: 100%;
+            margin-left: auto;
+                margin-right: auto;
             }
             
             .hero-btns {
@@ -637,24 +700,27 @@
             .section-title {
                 font-size: 2.2rem;
             }
+            
+            .modal-content {
+                padding: 1.5rem;
+            }
         }
     </style>
 </head>
 <body>
     <!-- Header -->
-    <header>
+    <header id="home">
         <div class="container">
             <nav class="navbar">
-                <a href="#" class="logo">
+                <a href="#home" class="logo">
                     <i class="fas fa-brain"></i>
                     NeuroNotes
                 </a>
                 <ul class="nav-links">
-                    <li><a href="#">Home</a></li>
-                    <li><a href="#">Features</a></li>
-                    <li><a href="#">Psychology</a></li>
-                    <li><a href="#">Testimonials</a></li>
-                    <li><a href="#">Pricing</a></li>
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#features">Features</a></li>
+                    <li><a href="#psychology">Psychology</a></li>
+                    <li><a href="#testimonials">Testimonials</a></li>
                 </ul>
                 <a href="#" class="btn btn-primary" data-modal="uploadModal">Get Early Access</a>
             </nav>
@@ -669,8 +735,8 @@
                     <h1>Learning Made <span>Irresistible</span> for Busy Minds</h1>
                     <p>NeuroNotes transforms your study materials into engaging, interactive experiences that capture attention and boost retention for students with Busy Minds.</p>
                     <div class="hero-btns">
-                       <a href="#" class="btn btn-primary" data-modal="uploadModal">Transform Your Notes</a>
-                        <a href="#" class="btn btn-focus">See How It Works</a>
+                        <a href="#" class="btn btn-primary" data-modal="uploadModal">Transform Your Notes</a>
+                        <a href="#features" class="btn btn-focus">See How It Works</a>
                     </div>
                 </div>
                 <div class="hero-image">
@@ -715,7 +781,7 @@
     </section>
 
     <!-- Features -->
-    <section class="features">
+    <section class="features" id="features">
         <div class="container">
             <h2 class="section-title">ADHD-Friendly <span>Learning Tools</span></h2>
             <p class="section-subtitle">We use psychology-backed techniques to make studying irresistible and effective</p>
@@ -773,7 +839,7 @@
     </section>
 
     <!-- Psychology Section -->
-    <section class="psychology">
+    <section class="psychology" id="psychology">
         <div class="container">
             <h2 class="section-title">The <span>Psychology</span> Behind Our Approach</h2>
             <p class="section-subtitle">We leverage cognitive science to create ADHD-friendly learning experiences</p>
@@ -813,16 +879,16 @@
     </section>
 
     <!-- CTA -->
-    <section class="cta">
+    <section class="cta" id="cta">
         <div class="container">
             <h2>Ready to Transform Your Learning Experience?</h2>
             <p>Join thousands of students with ADHD who have made studying engaging and effective</p>
-             <a href="#" class="btn btn-focus pulse"data-modal="uploadModal">Start Your Free Trial</a>
+            <a href="#" class="btn btn-focus pulse" data-modal="uploadModal">Start Your Free Trial</a>
         </div>
     </section>
 
     <!-- Testimonials -->
-    <section class="testimonials">
+    <section class="testimonials" id="testimonials">
         <div class="container">
             <h2 class="section-title">Students <span>Love NeuroNotes</span></h2>
             <p class="section-subtitle">Hear from students with ADHD who transformed their learning experience</p>
@@ -882,11 +948,11 @@
                 <div class="footer-column">
                     <h3>Features</h3>
                     <ul>
-                        <li><a href="#">Visual Transformation</a></li>
-                        <li><a href="#">Interactive Quizzes</a></li>
-                        <li><a href="#">Word Puzzles</a></li>
-                        <li><a href="#">Focus Tools</a></li>
-                        <li><a href="#">Progress Tracking</a></li>
+                        <li><a href="#features">Visual Transformation</a></li>
+                        <li><a href="#features">Interactive Quizzes</a></li>
+                        <li><a href="#features">Word Puzzles</a></li>
+                        <li><a href="#features">Focus Tools</a></li>
+                        <li><a href="#features">Progress Tracking</a></li>
                     </ul>
                 </div>
                 
@@ -910,44 +976,6 @@
                     </ul>
                 </div>
             </div>
-
-           <!-- Upload Modal -->
-<div id="uploadModal" class="modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:1000; justify-content:center; align-items:center;">
-  <div class="modal-content" style="background:#fff; padding:2rem; border-radius:1rem; max-width:500px; width:90%; position:relative;">
-    <span class="close-modal" style="position:absolute; top:10px; right:20px; font-size:24px; cursor:pointer;">&times;</span>
-    <h2 style="text-align:center; color:#4b2aad;">📩 Request Early Access</h2>
-
-    <form 
-      id="neuronotes-form"
-      style="display: flex; flex-direction: column; gap: 1rem; margin-top:1rem;"
-    >
-      <input 
-        type="email" 
-        name="user_email" 
-        placeholder="Your Email" 
-        required 
-        style="padding: 0.75rem; border-radius: 8px; border: 1px solid #ccc;"
-      />
-      <input 
-        type="file" 
-        name="notes_file" 
-        accept=".pdf,.doc,.docx,.txt" 
-        required
-        style="padding: 0.75rem; border-radius: 8px; border: 1px solid #ccc;"
-      />
-      <button 
-        type="submit" 
-        class="btn btn-primary"
-        style="padding: 0.75rem; background: #4b2aad; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer;"
-      >
-        Transform My Notes
-      </button>
-    </form>
-
-    <p id="status-msg" style="margin-top: 1rem; text-align: center;"></p>
-  </div>
-</div>
-
             
             <div class="copyright">
                 &copy; 2025 NeuroNotes. Designed with ❤️ for ADHD learners.
@@ -955,14 +983,98 @@
         </div>
     </footer>
 
+    <!-- Upload Modal -->
+    <div id="uploadModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2><i class="fas fa-file-upload"></i> Transform Your Notes</h2>
+            <p>Upload your study materials and we'll transform them into engaging, ADHD-friendly learning experiences.</p>
+            
+            <form id="neuronotes-form" style="margin-top: 20px;">
+                <div style="margin-bottom: 15px;">
+                    <label for="user-email" style="display: block; margin-bottom: 8px; font-weight: 500;">Your Email</label>
+                    <input 
+                        type="email" 
+                        id="user-email" 
+                        name="user_email" 
+                        placeholder="your.email@example.com" 
+                        required 
+                        style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #ddd;"
+                    >
+                </div>
+                
+                <div style="margin-bottom: 20px;">
+                    <label for="notes-file" style="display: block; margin-bottom: 8px; font-weight: 500;">Upload Notes</label>
+                    <div style="border: 2px dashed #d1c4e9; border-radius: 8px; padding: 25px; text-align: center; background: #f9f5ff; cursor: pointer;" id="drop-area">
+                        <i class="fas fa-cloud-upload-alt" style="font-size: 36px; color: #7e57c2; margin-bottom: 10px;"></i>
+                        <p style="margin-bottom: 10px; color: #666;">Drag & drop your file here</p>
+                        <p style="font-size: 0.9rem; color: #888; margin-bottom: 15px;">or</p>
+                        <div style="position: relative; display: inline-block;">
+                            <input 
+                                type="file" 
+                                id="notes-file" 
+                                name="notes_file" 
+                                accept=".pdf,.doc,.docx,.txt,.pptx" 
+                                required
+                                style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer;"
+                            >
+                            <button type="button" style="background: #7e57c2; color: white; border: none; padding: 10px 20px; border-radius: 50px; font-weight: 600; cursor: pointer;">
+                                Browse Files
+                            </button>
+                        </div>
+                        <p id="file-name" style="margin-top: 15px; font-size: 0.9rem;"></p>
+                    </div>
+                </div>
+                
+                <button 
+                    type="submit" 
+                    class="btn btn-primary"
+                    style="width: 100%; padding: 15px; font-size: 1.1rem;"
+                >
+                    <i class="fas fa-magic"></i> Transform My Notes
+                </button>
+            </form>
+            
+            <p id="status-msg" style="text-align: center; margin-top: 20px; min-height: 24px;"></p>
+        </div>
+    </div>
+
     <script>
+        // Smooth scrolling for all anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                if(targetId === '#') return;
+                
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                    
+                    // Close modal if open
+                    document.querySelectorAll('.modal').forEach(modal => {
+                        modal.classList.remove('active');
+                    });
+                }
+            });
+        });
+
         // Interactive quiz option selection
         const quizOptions = document.querySelectorAll('.quiz-option');
         
         quizOptions.forEach(option => {
             option.addEventListener('click', () => {
                 // Remove any existing selections
-                quizOptions.forEach(opt => opt.style.background = 'white');
+                quizOptions.forEach(opt => {
+                    opt.style.background = 'white';
+                    opt.style.color = '';
+                    opt.style.borderColor = 'var(--border)';
+                    opt.innerHTML = opt.textContent; // Reset content
+                });
                 
                 // Highlight selected option
                 option.style.background = 'var(--accent)';
@@ -996,7 +1108,20 @@
                 
                 // Show a message about the feature
                 const featureName = item.querySelector('h4').textContent;
-                alert(`Opening ${featureName} experience...`);
+                const featureMessages = {
+                    "Word Puzzles": "Creating personalized word puzzles from your notes...",
+                    "Visual ID": "Identifying key visual concepts in your materials...",
+                    "Quick Quiz": "Generating a quick quiz based on your study topics...",
+                    "Knowledge Games": "Preparing interactive knowledge games for you..."
+                };
+                
+                const message = featureMessages[featureName] || `Opening ${featureName} experience...`;
+                document.getElementById('status-msg').textContent = message;
+                document.getElementById('status-msg').style.color = "var(--primary)";
+                
+                setTimeout(() => {
+                    document.getElementById('status-msg').textContent = "";
+                }, 3000);
             });
         });
         
@@ -1013,50 +1138,138 @@
             });
         });
 
+        // Modal functionality
+        const modal = document.getElementById('uploadModal');
+        const closeBtn = document.querySelector('.close-modal');
+        const triggerButtons = document.querySelectorAll('[data-modal="uploadModal"]');
+        const form = document.getElementById('neuronotes-form');
+        const statusMsg = document.getElementById('status-msg');
+        const fileInput = document.getElementById('notes-file');
+        const fileName = document.getElementById('file-name');
+        const dropArea = document.getElementById('drop-area');
 
-    // Replace with your EmailJS credentials
-  const EMAILJS_PUBLIC_KEY = "j9_P2VuKRPQ0v8Gtz";
-  const EMAILJS_SERVICE_ID = "service_rw4fkeh";
-  const EMAILJS_TEMPLATE_ID = "template_5vmyofj";
+        // Open modal
+        triggerButtons.forEach(button => {
+            button.addEventListener('click', e => {
+                e.preventDefault();
+                modal.classList.add('active');
+                document.body.style.overflow = 'hidden'; // Prevent background scrolling
+            });
+        });
 
-  emailjs.init(EMAILJS_PUBLIC_KEY);
+        // Close modal on click X
+        closeBtn.addEventListener('click', () => {
+            modal.classList.remove('active');
+            document.body.style.overflow = ''; // Restore scrolling
+        });
 
-  document.getElementById('neuronotes-form').addEventListener('submit', function(e) {
-    e.preventDefault();
-    
-    const form = this;
-    const statusMsg = document.getElementById('status-msg');
-    statusMsg.textContent = "⏳ Sending...";
+        // Close modal on outside click
+        window.addEventListener('click', e => {
+            if (e.target === modal) {
+                modal.classList.remove('active');
+                document.body.style.overflow = ''; // Restore scrolling
+            }
+        });
 
-    emailjs.sendForm(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, form)
-      .then(() => {
-        statusMsg.textContent = "✅ Notes sent! We'll get back to you soon.";
-        form.reset();
-      }, (error) => {
-        statusMsg.textContent = "❌ Failed to send. Try again later.";
-        console.error("EmailJS error:", error);
-      });
-  });
+        // File upload handling
+        fileInput.addEventListener('change', function() {
+            if (this.files.length > 0) {
+                fileName.textContent = `Selected: ${this.files[0].name}`;
+            }
+        });
 
-  // Modal open/close logic
-  document.querySelectorAll('[data-modal="uploadModal"]').forEach(button => {
-    button.addEventListener('click', e => {
-      e.preventDefault();
-      document.getElementById('uploadModal').style.display = 'flex';
-    });
-  });
+        // Drag and drop functionality
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            dropArea.addEventListener(eventName, preventDefaults, false);
+        });
 
-  document.querySelector('.close-modal').addEventListener('click', () => {
-    document.getElementById('uploadModal').style.display = 'none';
-  });
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
 
-  window.addEventListener('click', e => {
-    const modal = document.getElementById('uploadModal');
-    if (e.target === modal) {
-      modal.style.display = 'none';
-    }
-  });
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropArea.addEventListener(eventName, highlight, false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropArea.addEventListener(eventName, unhighlight, false);
+        });
+
+        function highlight() {
+            dropArea.style.borderColor = 'var(--accent)';
+            dropArea.style.background = '#f0e8ff';
+        }
+
+        function unhighlight() {
+            dropArea.style.borderColor = '#d1c4e9';
+            dropArea.style.background = '#f9f5ff';
+        }
+
+        dropArea.addEventListener('drop', handleDrop, false);
+
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            fileInput.files = files;
+            fileName.textContent = `Selected: ${files[0].name}`;
+        }
+
+        // Form submission
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            statusMsg.textContent = "⏳ Processing your notes...";
+            statusMsg.style.color = "var(--primary)";
+            
+            // Simulate processing
+            setTimeout(() => {
+                statusMsg.innerHTML = "✅ Success! Your notes are being transformed.<br>We'll email your interactive materials shortly.";
+                statusMsg.style.color = "var(--success)";
+                
+                // Reset form after success
+                setTimeout(() => {
+                    form.reset();
+                    fileName.textContent = "";
+                    modal.classList.remove('active');
+                    document.body.style.overflow = '';
+                    
+                    // Show a success message in the hero section
+                    const heroMsg = document.createElement('div');
+                    heroMsg.innerHTML = '<div style="background: var(--success); color: white; padding: 15px; border-radius: 8px; text-align: center; margin-top: 20px; animation: fadeIn 0.5s;">🎉 Check your email for your transformed notes!</div>';
+                    document.querySelector('.hero-text').appendChild(heroMsg);
+                    
+                    setTimeout(() => {
+                        heroMsg.style.opacity = '0';
+                        setTimeout(() => {
+                            heroMsg.remove();
+                        }, 500);
+                    }, 5000);
+                }, 2000);
+            }, 1500);
+        });
+
+        // Initialize animations
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add scroll animations
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = "1";
+                        entry.target.style.transform = "translateY(0)";
+                    }
+                });
+            }, {
+                threshold: 0.1
+            });
+            
+            // Animate sections on scroll
+            document.querySelectorAll('.features-grid, .psych-grid, .testimonial-grid').forEach(section => {
+                section.style.opacity = "0";
+                section.style.transform = "translateY(20px)";
+                section.style.transition = "opacity 0.6s ease, transform 0.6s ease";
+                observer.observe(section);
+            });
+        });
     </script>
-    
 </body>
 </html>
