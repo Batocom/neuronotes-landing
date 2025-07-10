@@ -911,28 +911,28 @@
                 </div>
             </div>
 
-            <!-- Upload Modal -->
+           <!-- Upload Modal -->
 <div id="uploadModal" class="modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:1000; justify-content:center; align-items:center;">
   <div class="modal-content" style="background:#fff; padding:2rem; border-radius:1rem; max-width:500px; width:90%; position:relative;">
     <span class="close-modal" style="position:absolute; top:10px; right:20px; font-size:24px; cursor:pointer;">&times;</span>
     <h2 style="text-align:center; color:#4b2aad;">📩 Request Early Access</h2>
+
     <form 
-      action="https://formspree.io/f/mzzgnble"
-      method="POST"
-      enctype="multipart/form-data"
+      id="neuronotes-form"
       style="display: flex; flex-direction: column; gap: 1rem; margin-top:1rem;"
     >
       <input 
         type="email" 
-        name="email" 
+        name="user_email" 
         placeholder="Your Email" 
         required 
         style="padding: 0.75rem; border-radius: 8px; border: 1px solid #ccc;"
       />
       <input 
         type="file" 
-        name="upload" 
+        name="notes_file" 
         accept=".pdf,.doc,.docx,.txt" 
+        required
         style="padding: 0.75rem; border-radius: 8px; border: 1px solid #ccc;"
       />
       <button 
@@ -943,6 +943,8 @@
         Transform My Notes
       </button>
     </form>
+
+    <p id="status-msg" style="margin-top: 1rem; text-align: center;"></p>
   </div>
 </div>
 
@@ -1012,7 +1014,31 @@
         });
 
 
-    // Open modal
+    // Replace with your EmailJS credentials
+  const EMAILJS_PUBLIC_KEY = "j9_P2VuKRPQ0v8Gtz";
+  const EMAILJS_SERVICE_ID = "service_rw4fkeh";
+  const EMAILJS_TEMPLATE_ID = "template_5vmyofj";
+
+  emailjs.init(EMAILJS_PUBLIC_KEY);
+
+  document.getElementById('neuronotes-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const form = this;
+    const statusMsg = document.getElementById('status-msg');
+    statusMsg.textContent = "⏳ Sending...";
+
+    emailjs.sendForm(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, form)
+      .then(() => {
+        statusMsg.textContent = "✅ Notes sent! We'll get back to you soon.";
+        form.reset();
+      }, (error) => {
+        statusMsg.textContent = "❌ Failed to send. Try again later.";
+        console.error("EmailJS error:", error);
+      });
+  });
+
+  // Modal open/close logic
   document.querySelectorAll('[data-modal="uploadModal"]').forEach(button => {
     button.addEventListener('click', e => {
       e.preventDefault();
@@ -1020,18 +1046,16 @@
     });
   });
 
-  // Close modal
   document.querySelector('.close-modal').addEventListener('click', () => {
     document.getElementById('uploadModal').style.display = 'none';
   });
 
-  // Close on outside click
   window.addEventListener('click', e => {
     const modal = document.getElementById('uploadModal');
     if (e.target === modal) {
       modal.style.display = 'none';
     }
-  });    
+  });
     </script>
     
 </body>
