@@ -23,7 +23,11 @@ export default async function handler(req, res) {
     }
 
     const { email } = fields;
-    const uploadedFile = files['upload'];
+    let uploadedFile = files['upload'];
+    if (Array.isArray(uploadedFile)) {
+      uploadedFile = uploadedFile[0];
+    }
+
 
     console.log('📨 Email from:', email);
     console.log('📎 Uploaded file:', uploadedFile);
