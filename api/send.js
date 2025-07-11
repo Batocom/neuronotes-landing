@@ -1,7 +1,6 @@
 // api/send.js
 import formidable from 'formidable';
 import fs from 'fs';
-import path from 'path';
 import nodemailer from 'nodemailer';
 
 export const config = {
@@ -19,19 +18,27 @@ export default async function handler(req, res) {
 
   form.parse(req, async (err, fields, files) => {
     if (err) {
-      console.error('Form parse error:', err);
+      console.error('❌ Form parse error:', err);
       return res.status(500).json({ error: 'Form processing error' });
     }
 
     const { email } = fields;
     const uploadedFile = files['upload'];
-    
-    console.log('Fields:', fields);
-    console.log('Files:', files);
 
+    console.log('📨 Email from:', email);
+    console.log('📎 Uploaded file:', uploadedFile);
 
     if (!uploadedFile) {
+      console.error('❌ No file uploaded. Files:', files);
       return res.status(400).json({ error: 'No file uploaded' });
+    }
+
+    let fileBuffer;
+    try {
+      fileBuffer = fs.readFileSync(uploadedFile.filepath);
+    } catch (readErr) {
+      console.error('❌ File read error:', readErr);
+      return res.status(500).json({ error: 'Failed to read uploaded file' });
     }
 
     const transporter = nodemailer.createTransport({
@@ -50,18 +57,27 @@ export default async function handler(req, res) {
       html: `<p><strong>Email:</strong> ${email}</p>`,
       attachments: [
         {
-          filename: uploadedFile.originalFilename,
-          path: uploadedFile.filepath
+          filename: uploadedFile.originalFilename || 'uploaded_file',
+          content: fileBuffer
         }
       ]
     };
 
     try {
       await transporter.sendMail(mailOptions);
+      console.log('✅ Email sent successfully');
       res.status(200).json({ success: true });
     } catch (error) {
-      console.error('Send error:', error);
+      console.error('❌ Send error:', error);
       res.status(500).json({ error: 'Failed to send email' });
+    } finally {
+      // Optional: clean up temp file
+      try {
+        fs.unlinkSync(uploadedFile.filepath);
+        console.log('🧹 Temp file deleted');
+      } catch (unlinkErr) {
+        console.warn('⚠️ Failed to delete temp file:', unlinkErr);
+      }
     }
   });
 }
