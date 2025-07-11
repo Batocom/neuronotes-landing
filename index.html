@@ -6,7 +6,6 @@
     <title>NeuroNotes | ADHD-Friendly Learning Platform</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
     <style>
         :root {
             --primary: #5e35b1;
@@ -740,6 +739,8 @@
             
             .hero p {
                 max-width: 100%;
+            margin-left: auto;
+                margin-right: auto;
             }
             
             .hero-btns {
@@ -1124,13 +1125,13 @@
             <h2><i class="fas fa-file-upload"></i> Transform Your Notes</h2>
             <p>Upload your study materials and we'll transform them into engaging, ADHD-friendly learning experiences.</p>
             
-            <form id="neuronotes-form" style="margin-top: 20px;">
+            <form id="neuronotes-form" enctype="multipart/form-data" method="POST" style="margin-top: 20px;">
                 <div style="margin-bottom: 15px;">
                     <label for="user-email" style="display: block; margin-bottom: 8px; font-weight: 500;">Your Email</label>
                     <input 
                         type="email" 
                         id="user-email" 
-                        name="user_email" 
+                        name="email" 
                         placeholder="your.email@example.com" 
                         required 
                         style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #ddd;"
@@ -1147,7 +1148,7 @@
                             <input 
                                 type="file" 
                                 id="notes-file" 
-                                name="notes_file" 
+                                name="upload" 
                                 accept=".pdf,.doc,.docx,.txt,.pptx" 
                                 required
                                 style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer;"
@@ -1174,231 +1175,249 @@
     </div>
 
     <script>
-        // Initialize EmailJS
-        (function() {
-            const EMAILJS_PUBLIC_KEY = "j9_P2VuKRPQ0v8Gtz";
-            const EMAILJS_SERVICE_ID = "service_rw4fkeh";
-            const EMAILJS_TEMPLATE_ID = "template_5vmyofj";
-
-            emailjs.init(EMAILJS_PUBLIC_KEY);
-            
-            // Smooth scrolling for all anchor links
-            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-                anchor.addEventListener('click', function (e) {
-                    e.preventDefault();
-                    
-                    const targetId = this.getAttribute('href');
-                    if(targetId === '#') return;
-                    
-                    const targetElement = document.querySelector(targetId);
-                    if (targetElement) {
-                        window.scrollTo({
-                            top: targetElement.offsetTop - 80,
-                            behavior: 'smooth'
-                        });
-                        
-                        // Close mobile menu if open
-                        document.getElementById('mobileNav').classList.remove('active');
-                    }
-                });
-            });
-
-            // Interactive quiz option selection
-            const quizOptions = document.querySelectorAll('.quiz-option');
-            
-            quizOptions.forEach(option => {
-                option.addEventListener('click', () => {
-                    // Remove any existing selections
-                    quizOptions.forEach(opt => {
-                        opt.style.background = 'white';
-                        opt.style.color = '';
-                        opt.style.borderColor = 'var(--border)';
-                        opt.innerHTML = opt.textContent; // Reset content
+        // Smooth scrolling for all anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                if(targetId === '#') return;
+                
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
                     });
                     
-                    // Highlight selected option
-                    option.style.background = 'var(--accent)';
-                    option.style.color = 'white';
-                    option.style.borderColor = 'var(--accent)';
-                    
-                    // Show feedback after delay
-                    setTimeout(() => {
-                        if(option.textContent === 'Mitochondria') {
-                            option.innerHTML = '<i class="fas fa-check"></i> Correct!';
-                            option.style.background = 'var(--success)';
-                            option.style.borderColor = 'var(--success)';
-                        } else {
-                            option.innerHTML = '<i class="fas fa-times"></i> Try Again';
-                            option.style.background = '#ff6b6b';
-                            option.style.borderColor = '#ff6b6b';
-                        }
-                    }, 300);
-                });
+                    // Close mobile menu if open
+                    document.getElementById('mobileNav').classList.remove('active');
+                }
             });
-            
-            // Interactive items animation
-            const interactiveItems = document.querySelectorAll('.interactive-item');
-            
-            interactiveItems.forEach(item => {
-                item.addEventListener('click', () => {
-                    item.style.transform = 'scale(0.95)';
-                    setTimeout(() => {
-                        item.style.transform = '';
-                    }, 200);
-                    
-                    // Show a message about the feature
-                    const featureName = item.querySelector('h4').textContent;
-                    const featureMessages = {
-                        "Word Puzzles": "Creating personalized word puzzles from your notes...",
-                        "Visual ID": "Identifying key visual concepts in your materials...",
-                        "Quick Quiz": "Generating a quick quiz based on your study topics...",
-                        "Knowledge Games": "Preparing interactive knowledge games for you..."
-                    };
-                    
-                    const message = featureMessages[featureName] || `Opening ${featureName} experience...`;
-                    document.getElementById('status-msg').textContent = message;
-                    document.getElementById('status-msg').style.color = "var(--primary)";
-                    
-                    setTimeout(() => {
-                        document.getElementById('status-msg').textContent = "";
-                    }, 3000);
-                });
-            });
-            
-            // Feature card hover animations
-            const featureCards = document.querySelectorAll('.feature-card');
-            
-            featureCards.forEach(card => {
-                card.addEventListener('mouseenter', () => {
-                    card.style.zIndex = '10';
+        });
+
+        // Interactive quiz option selection
+        const quizOptions = document.querySelectorAll('.quiz-option');
+        
+        quizOptions.forEach(option => {
+            option.addEventListener('click', () => {
+                // Remove any existing selections
+                quizOptions.forEach(opt => {
+                    opt.style.background = 'white';
+                    opt.style.color = '';
+                    opt.style.borderColor = 'var(--border)';
+                    opt.innerHTML = opt.textContent; // Reset content
                 });
                 
-                card.addEventListener('mouseleave', () => {
-                    card.style.zIndex = '1';
-                });
+                // Highlight selected option
+                option.style.background = 'var(--accent)';
+                option.style.color = 'white';
+                option.style.borderColor = 'var(--accent)';
+                
+                // Show feedback after delay
+                setTimeout(() => {
+                    if(option.textContent === 'Mitochondria') {
+                        option.innerHTML = '<i class="fas fa-check"></i> Correct!';
+                        option.style.background = 'var(--success)';
+                        option.style.borderColor = 'var(--success)';
+                    } else {
+                        option.innerHTML = '<i class="fas fa-times"></i> Try Again';
+                        option.style.background = '#ff6b6b';
+                        option.style.borderColor = '#ff6b6b';
+                    }
+                }, 300);
             });
+        });
+        
+        // Interactive items animation
+        const interactiveItems = document.querySelectorAll('.interactive-item');
+        
+        interactiveItems.forEach(item => {
+            item.addEventListener('click', () => {
+                item.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    item.style.transform = '';
+                }, 200);
+                
+                // Show a message about the feature
+                const featureName = item.querySelector('h4').textContent;
+                const featureMessages = {
+                    "Word Puzzles": "Creating personalized word puzzles from your notes...",
+                    "Visual ID": "Identifying key visual concepts in your materials...",
+                    "Quick Quiz": "Generating a quick quiz based on your study topics...",
+                    "Knowledge Games": "Preparing interactive knowledge games for you..."
+                };
+                
+                const message = featureMessages[featureName] || `Opening ${featureName} experience...`;
+                document.getElementById('status-msg').textContent = message;
+                document.getElementById('status-msg').style.color = "var(--primary)";
+                
+                setTimeout(() => {
+                    document.getElementById('status-msg').textContent = "";
+                }, 3000);
+            });
+        });
+        
+        // Feature card hover animations
+        const featureCards = document.querySelectorAll('.feature-card');
+        
+        featureCards.forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                card.style.zIndex = '10';
+            });
+            
+            card.addEventListener('mouseleave', () => {
+                card.style.zIndex = '1';
+            });
+        });
 
-            // Mobile menu functionality
-            const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
-            const mobileNav = document.getElementById('mobileNav');
-            const closeMobileNav = document.querySelector('.close-mobile-nav');
-            
-            mobileMenuBtn.addEventListener('click', () => {
-                mobileNav.classList.add('active');
-            });
-            
-            closeMobileNav.addEventListener('click', () => {
+        // Mobile menu functionality
+        const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+        const mobileNav = document.getElementById('mobileNav');
+        const closeMobileNav = document.querySelector('.close-mobile-nav');
+        
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileNav.classList.add('active');
+        });
+        
+        closeMobileNav.addEventListener('click', () => {
+            mobileNav.classList.remove('active');
+        });
+        
+        // Close mobile menu when clicking on a link
+        document.querySelectorAll('.mobile-nav-links a').forEach(link => {
+            link.addEventListener('click', () => {
                 mobileNav.classList.remove('active');
             });
-            
-            // Close mobile menu when clicking on a link
-            document.querySelectorAll('.mobile-nav-links a').forEach(link => {
-                link.addEventListener('click', () => {
-                    mobileNav.classList.remove('active');
-                });
+        });
+
+        // Modal functionality
+        const modal = document.getElementById('uploadModal');
+        const closeBtn = document.querySelector('.close-modal');
+        const triggerButtons = document.querySelectorAll('[data-modal="uploadModal"]');
+        const form = document.getElementById('neuronotes-form');
+        const statusMsg = document.getElementById('status-msg');
+        const fileInput = document.getElementById('notes-file');
+        const fileName = document.getElementById('file-name');
+        const dropArea = document.getElementById('drop-area');
+
+        // Open modal
+        triggerButtons.forEach(button => {
+            button.addEventListener('click', e => {
+                e.preventDefault();
+                modal.classList.add('active');
+                document.body.style.overflow = 'hidden'; // Prevent background scrolling
             });
+        });
 
-            // Modal functionality
-            const modal = document.getElementById('uploadModal');
-            const closeBtn = document.querySelector('.close-modal');
-            const triggerButtons = document.querySelectorAll('[data-modal="uploadModal"]');
-            const form = document.getElementById('neuronotes-form');
-            const statusMsg = document.getElementById('status-msg');
-            const fileInput = document.getElementById('notes-file');
-            const fileName = document.getElementById('file-name');
-            const dropArea = document.getElementById('drop-area');
+        // Close modal on click X
+        closeBtn.addEventListener('click', () => {
+            modal.classList.remove('active');
+            document.body.style.overflow = ''; // Restore scrolling
+        });
 
-            // Open modal
-            triggerButtons.forEach(button => {
-                button.addEventListener('click', e => {
-                    e.preventDefault();
-                    modal.classList.add('active');
-                    document.body.style.overflow = 'hidden'; // Prevent background scrolling
-                });
-            });
-
-            // Close modal on click X
-            closeBtn.addEventListener('click', () => {
+        // Close modal on outside click
+        window.addEventListener('click', e => {
+            if (e.target === modal) {
                 modal.classList.remove('active');
                 document.body.style.overflow = ''; // Restore scrolling
-            });
-
-            // Close modal on outside click
-            window.addEventListener('click', e => {
-                if (e.target === modal) {
-                    modal.classList.remove('active');
-                    document.body.style.overflow = ''; // Restore scrolling
-                }
-            });
-
-            // File upload handling
-            fileInput.addEventListener('change', function() {
-                if (this.files.length > 0) {
-                    fileName.textContent = `Selected: ${this.files[0].name}`;
-                }
-            });
-
-            // Drag and drop functionality
-            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-                dropArea.addEventListener(eventName, preventDefaults, false);
-            });
-
-            function preventDefaults(e) {
-                e.preventDefault();
-                e.stopPropagation();
             }
+        });
 
-            ['dragenter', 'dragover'].forEach(eventName => {
-                dropArea.addEventListener(eventName, highlight, false);
-            });
-
-            ['dragleave', 'drop'].forEach(eventName => {
-                dropArea.addEventListener(eventName, unhighlight, false);
-            });
-
-            function highlight() {
-                dropArea.style.borderColor = 'var(--accent)';
-                dropArea.style.background = '#f0e8ff';
+        // File upload handling
+        fileInput.addEventListener('change', function() {
+            if (this.files.length > 0) {
+                fileName.textContent = `Selected: ${this.files[0].name}`;
             }
+        });
 
-            function unhighlight() {
-                dropArea.style.borderColor = '#d1c4e9';
-                dropArea.style.background = '#f9f5ff';
-            }
+        // Drag and drop functionality
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            dropArea.addEventListener(eventName, preventDefaults, false);
+        });
 
-            dropArea.addEventListener('drop', handleDrop, false);
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
 
-            function handleDrop(e) {
-                const dt = e.dataTransfer;
-                const files = dt.files;
-                fileInput.files = files;
-                fileName.textContent = `Selected: ${files[0].name}`;
-            }
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropArea.addEventListener(eventName, highlight, false);
+        });
 
-            // Form submission with EmailJS
-            form.addEventListener('submit', function(e) {
-                e.preventDefault();
-                statusMsg.textContent = "⏳ Processing your notes...";
-                statusMsg.style.color = "var(--primary)";
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropArea.addEventListener(eventName, unhighlight, false);
+        });
+
+        function highlight() {
+            dropArea.style.borderColor = 'var(--accent)';
+            dropArea.style.background = '#f0e8ff';
+        }
+
+        function unhighlight() {
+            dropArea.style.borderColor = '#d1c4e9';
+            dropArea.style.background = '#f9f5ff';
+        }
+
+        dropArea.addEventListener('drop', handleDrop, false);
+
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            fileInput.files = files;
+            fileName.textContent = `Selected: ${files[0].name}`;
+        }
+
+        // Form submission to Node.js backend
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const submitButton = form.querySelector('button[type="submit"]');
+            const originalButtonText = submitButton.innerHTML;
+            
+            // Show loading state
+            submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+            submitButton.disabled = true;
+            
+            statusMsg.textContent = "⏳ Uploading your notes...";
+            statusMsg.style.color = "var(--primary)";
+            
+            try {
+                const formData = new FormData(this);
                 
-                // Send email using EmailJS
-                emailjs.sendForm(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, this)
-                    .then(() => {
-                        statusMsg.innerHTML = "✅ Success! Your notes are being transformed.<br>We'll email your interactive materials shortly.";
-                        statusMsg.style.color = "var(--success)";
-                        
-                        // Reset form after success
-                        setTimeout(() => {
-                            form.reset();
-                            fileName.textContent = "";
-                        }, 3000);
-                    }, (error) => {
-                        statusMsg.textContent = "❌ Error sending request. Please try again.";
-                        statusMsg.style.color = "#ff6b6b";
-                        console.error("EmailJS error:", error);
-                    });
-            });
-        })();
+                const response = await fetch('/api/send', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Server responded with an error');
+                }
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    statusMsg.innerHTML = "✅ Success! Your notes are being transformed.<br>We'll email your interactive materials shortly.";
+                    statusMsg.style.color = "var(--success)";
+                    
+                    // Reset form after success
+                    setTimeout(() => {
+                        form.reset();
+                        fileName.textContent = "";
+                        submitButton.innerHTML = originalButtonText;
+                        submitButton.disabled = false;
+                    }, 3000);
+                } else {
+                    throw new Error(result.error || 'Unknown error');
+                }
+            } catch (error) {
+                console.error('Submission error:', error);
+                statusMsg.textContent = `❌ Error: ${error.message || 'Failed to submit form'}`;
+                statusMsg.style.color = "#ff6b6b";
+                submitButton.innerHTML = originalButtonText;
+                submitButton.disabled = false;
+            }
+        });
     </script>
 </body>
 </html>
