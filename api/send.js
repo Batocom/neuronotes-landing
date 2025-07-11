@@ -1,3 +1,4 @@
+// api/send.js
 import formidable from 'formidable';
 import fs from 'fs';
 import pdfParse from 'pdf-parse';
@@ -21,7 +22,11 @@ export default async function handler(req, res) {
     if (err) return res.status(500).json({ error: 'Form parsing error' });
 
     const { email } = fields;
-    const uploadedFile = files.upload;
+    let uploadedFile = files.upload;
+
+    if (Array.isArray(uploadedFile)) {
+      uploadedFile = uploadedFile[0];
+    }
 
     if (!uploadedFile || !uploadedFile.filepath) {
       return res.status(400).json({ error: 'No file uploaded' });
@@ -49,7 +54,7 @@ Keep it short, clean, and structured for ADHD learners.`
             },
             {
               role: 'user',
-              content: extractedText.slice(0, 5000) // limit to prevent token overload
+              content: extractedText.slice(0, 5000)
             }
           ]
         },
@@ -63,7 +68,7 @@ Keep it short, clean, and structured for ADHD learners.`
 
       const result = response.data.choices[0].message.content;
 
-      // ✅ Email it to the user
+      // ✅ Create email transporter
       const transporter = nodemailer.createTransport({
         service: 'gmail',
         auth: {
@@ -72,6 +77,21 @@ Keep it short, clean, and structured for ADHD learners.`
         }
       });
 
+      // ✅ 1. Email to admin (with file)
+      await transporter.sendMail({
+        from: process.env.MAIL_USER,
+        to: process.env.MAIL_USER,
+        subject: '📥 New NeuroNotes Submission',
+        html: `<p>New notes were submitted by: <strong>${email}</strong></p>`,
+        attachments: [
+          {
+            filename: uploadedFile.originalFilename || 'uploaded_notes.pdf',
+            content: pdfBuffer
+          }
+        ]
+      });
+
+      // ✅ 2. Email to user (AI-transformed content)
       await transporter.sendMail({
         from: process.env.MAIL_USER,
         to: email,
