@@ -2,7 +2,7 @@
 import formidable from 'formidable';
 import fs from 'fs';
 import pdfParse from 'pdf-parse';
-import axios from 'axios';
+import axios from 'axios/dist/node/axios.cjs';
 import nodemailer from 'nodemailer';
 
 export const config = {
