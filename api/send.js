@@ -1,6 +1,7 @@
-// api/send.js
 import formidable from 'formidable';
 import fs from 'fs';
+import pdfParse from 'pdf-parse';
+import axios from 'axios';
 import nodemailer from 'nodemailer';
 
 export const config = {
@@ -17,71 +18,71 @@ export default async function handler(req, res) {
   const form = formidable({ multiples: false, uploadDir: '/tmp', keepExtensions: true });
 
   form.parse(req, async (err, fields, files) => {
-    if (err) {
-      console.error('❌ Form parse error:', err);
-      return res.status(500).json({ error: 'Form processing error' });
-    }
+    if (err) return res.status(500).json({ error: 'Form parsing error' });
 
     const { email } = fields;
-    let uploadedFile = files['upload'];
-    if (Array.isArray(uploadedFile)) {
-      uploadedFile = uploadedFile[0];
-    }
+    const uploadedFile = files.upload;
 
-
-    console.log('📨 Email from:', email);
-    console.log('📎 Uploaded file:', uploadedFile);
-
-    if (!uploadedFile) {
-      console.error('❌ No file uploaded. Files:', files);
+    if (!uploadedFile || !uploadedFile.filepath) {
       return res.status(400).json({ error: 'No file uploaded' });
     }
 
-    let fileBuffer;
     try {
-      fileBuffer = fs.readFileSync(uploadedFile.filepath);
-    } catch (readErr) {
-      console.error('❌ File read error:', readErr);
-      return res.status(500).json({ error: 'Failed to read uploaded file' });
-    }
+      // ✅ Extract PDF content
+      const pdfBuffer = fs.readFileSync(uploadedFile.filepath);
+      const parsed = await pdfParse(pdfBuffer);
+      const extractedText = parsed.text;
 
-    const transporter = nodemailer.createTransport({
-      service: 'gmail',
-      auth: {
-        user: process.env.MAIL_USER,
-        pass: process.env.MAIL_PASS
-      }
-    });
-
-    const mailOptions = {
-      from: process.env.MAIL_USER,
-      to: process.env.MAIL_USER,
-      subject: '📥 New NeuroNotes Submission',
-      text: `Email: ${email}`,
-      html: `<p><strong>Email:</strong> ${email}</p>`,
-      attachments: [
+      // ✅ Send to DeepSeek API
+      const response = await axios.post(
+        'https://api.deepseek.com/v1/chat/completions',
         {
-          filename: uploadedFile.originalFilename || 'uploaded_file',
-          content: fileBuffer
+          model: 'deepseek-chat',
+          messages: [
+            {
+              role: 'system',
+              content: `You are a smart study assistant. Based on the user's notes, generate:
+1. A bullet point summary
+2. 3 engaging quiz questions
+3. A visual diagram suggestion or metaphor
+Keep it short, clean, and structured for ADHD learners.`
+            },
+            {
+              role: 'user',
+              content: extractedText.slice(0, 5000) // limit to prevent token overload
+            }
+          ]
+        },
+        {
+          headers: {
+            'Authorization': `Bearer ${process.env.DEEPSEEK_API_KEY}`,
+            'Content-Type': 'application/json'
+          }
         }
-      ]
-    };
+      );
 
-    try {
-      await transporter.sendMail(mailOptions);
-      console.log('✅ Email sent successfully');
+      const result = response.data.choices[0].message.content;
+
+      // ✅ Email it to the user
+      const transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+          user: process.env.MAIL_USER,
+          pass: process.env.MAIL_PASS
+        }
+      });
+
+      await transporter.sendMail({
+        from: process.env.MAIL_USER,
+        to: email,
+        subject: '📘 Your NeuroNotes Kit is Ready',
+        html: `<p>Here’s your transformed study material:</p><pre style="white-space: pre-wrap;">${result}</pre>`
+      });
+
       res.status(200).json({ success: true });
     } catch (error) {
-      console.error('❌ Send error:', error);
-      res.status(500).json({ error: 'Failed to send email' });
-    } finally {
-      // Optional: clean up temp file
-      try {
-        fs.unlinkSync(uploadedFile.filepath);
-        console.log('🧹 Temp file deleted');
-      } catch (unlinkErr) {
-        console.warn('⚠️ Failed to delete temp file:', unlinkErr);
-      }
+      console.error('Processing error:', error);
+      res.status(500).json({ error: 'Failed to process notes' });
     }
   });
 }
