@@ -1,7 +1,7 @@
 // api/send.js
 import formidable from 'formidable';
 import fs from 'fs';
-import pdfParse from 'pdf-parse';
+import { PDFDocument } from 'pdf-lib';
 import axios from 'axios/dist/node/axios.cjs';
 import nodemailer from 'nodemailer';
 
@@ -33,10 +33,11 @@ export default async function handler(req, res) {
     }
 
     try {
-      // ✅ Extract PDF content
+      // ✅ Extract text using pdf-lib
       const pdfBuffer = fs.readFileSync(uploadedFile.filepath);
-      const parsed = await pdfParse(pdfBuffer);
-      const extractedText = parsed.text;
+      const pdfDoc = await PDFDocument.load(pdfBuffer);
+      const pages = pdfDoc.getPages();
+      const extractedText = pages.map(p => p.getTextContent?.()?.items?.map(i => i.str).join(' ') ?? '').join('\n');
 
       // ✅ Send to DeepSeek API
       const response = await axios.post(
@@ -68,7 +69,7 @@ Keep it short, clean, and structured for ADHD learners.`
 
       const result = response.data.choices[0].message.content;
 
-      // ✅ Create email transporter
+      // ✅ Email config
       const transporter = nodemailer.createTransport({
         service: 'gmail',
         auth: {
@@ -77,7 +78,7 @@ Keep it short, clean, and structured for ADHD learners.`
         }
       });
 
-      // ✅ 1. Email to admin (with file)
+      // ✅ 1. Email to admin
       await transporter.sendMail({
         from: process.env.MAIL_USER,
         to: process.env.MAIL_USER,
@@ -91,7 +92,7 @@ Keep it short, clean, and structured for ADHD learners.`
         ]
       });
 
-      // ✅ 2. Email to user (AI-transformed content)
+      // ✅ 2. Email to user with AI results
       await transporter.sendMail({
         from: process.env.MAIL_USER,
         to: email,
