@@ -24,7 +24,11 @@ export default async function handler(req, res) {
     }
 
     const { email } = fields;
-    const uploadedFile = files['notes-file'];
+    const uploadedFile = files['upload'];
+    
+    console.log('Fields:', fields);
+    console.log('Files:', files);
+
 
     if (!uploadedFile) {
       return res.status(400).json({ error: 'No file uploaded' });
