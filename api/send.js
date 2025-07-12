@@ -1,6 +1,7 @@
 import formidable from 'formidable';
 import fs from 'fs';
-import { getDocument } from 'pdfjs-dist/legacy/build/pdf.js';
+import pdfjsLib from 'pdfjs-dist/legacy/build/pdf.js';
+const { getDocument } = pdfjsLib;
 import axios from 'axios';
 import nodemailer from 'nodemailer';
 
