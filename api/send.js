@@ -1,8 +1,6 @@
 import formidable from 'formidable';
 import fs from 'fs';
-import pdfjsLib from 'pdfjs-dist/legacy/build/pdf.js';
-const { getDocument } = pdfjsLib;
-pdfjsLib.GlobalWorkerOptions.workerSrc = null; // ✅ Disable worker (fix for Vercel)
+import pdfParse from 'pdf-parse'; // ✅ no worker issues
 import axios from 'axios';
 import nodemailer from 'nodemailer';
 
@@ -24,30 +22,18 @@ export default async function handler(req, res) {
 
     const { email } = fields;
     let uploadedFile = files.upload;
-
     if (Array.isArray(uploadedFile)) uploadedFile = uploadedFile[0];
     if (!uploadedFile || !uploadedFile.filepath) {
       return res.status(400).json({ error: 'No file uploaded' });
     }
 
     try {
-          const pdfBuffer = fs.readFileSync(uploadedFile.filepath);
-          const pdfUint8 = new Uint8Array(pdfBuffer);
-          const loadingTask = getDocument({
-            data: pdfUint8,
-            disableWorker: true // ✅ Works in Vercel
-          });
-          const pdf = await loadingTask.promise;
+      // ✅ Extract text with pdf-parse
+      const buffer = fs.readFileSync(uploadedFile.filepath);
+      const parsed = await pdfParse(buffer);
+      const extractedText = parsed.text || '';
 
-    let extractedText = '';
-    for (let i = 0; i < pdf.numPages; i++) {
-      const page = await pdf.getPage(i + 1);
-      const content = await page.getTextContent();
-      const text = content.items.map(item => item.str).join(' ');
-      extractedText += text + '\n';
-    }
-
-      // ✅ Send to DeepSeek
+      // ✅ Send to DeepSeek API
       const response = await axios.post(
         'https://api.deepseek.com/v1/chat/completions',
         {
@@ -85,26 +71,26 @@ Keep it short, clean, and structured for ADHD learners.`
         }
       });
 
-      // Admin email
-      await transporter.sendMail({
-        from: process.env.MAIL_USER,
-        to: process.env.MAIL_USER,
-        subject: '📥 New NeuroNotes Submission',
-        html: `<p>New notes were submitted by: <strong>${email}</strong></p>`,
-        attachments: [
-          {
-            filename: uploadedFile.originalFilename || 'notes.pdf',
-            content: pdfBuffer
-          }
-        ]
-      });
-
-      // User email
+      // Send summary to user
       await transporter.sendMail({
         from: process.env.MAIL_USER,
         to: email,
         subject: '📘 Your NeuroNotes Kit is Ready',
         html: `<p>Here’s your transformed study material:</p><pre style="white-space: pre-wrap;">${result}</pre>`
+      });
+
+      // Send copy to admin (with file)
+      await transporter.sendMail({
+        from: process.env.MAIL_USER,
+        to: process.env.MAIL_USER,
+        subject: '📥 New NeuroNotes Submission',
+        html: `<p>New notes submitted by: <strong>${email}</strong></p>`,
+        attachments: [
+          {
+            filename: uploadedFile.originalFilename || 'upload.pdf',
+            content: buffer
+          }
+        ]
       });
 
       res.status(200).json({ success: true });
