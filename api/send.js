@@ -1,7 +1,6 @@
-// api/send.js
 import formidable from 'formidable';
 import fs from 'fs';
-import { PDFDocument } from 'pdf-lib';
+import pdfParse from 'pdf-parse';
 import axios from 'axios/dist/node/axios.cjs';
 import nodemailer from 'nodemailer';
 
@@ -24,22 +23,18 @@ export default async function handler(req, res) {
     const { email } = fields;
     let uploadedFile = files.upload;
 
-    if (Array.isArray(uploadedFile)) {
-      uploadedFile = uploadedFile[0];
-    }
-
+    if (Array.isArray(uploadedFile)) uploadedFile = uploadedFile[0];
     if (!uploadedFile || !uploadedFile.filepath) {
       return res.status(400).json({ error: 'No file uploaded' });
     }
 
     try {
-      // ✅ Extract text using pdf-lib
+      // ✅ Extract real text with pdf-parse
       const pdfBuffer = fs.readFileSync(uploadedFile.filepath);
-      const pdfDoc = await PDFDocument.load(pdfBuffer);
-      const pages = pdfDoc.getPages();
-      const extractedText = pages.map(p => p.getTextContent?.()?.items?.map(i => i.str).join(' ') ?? '').join('\n');
+      const parsed = await pdfParse(pdfBuffer);
+      const extractedText = parsed.text;
 
-      // ✅ Send to DeepSeek API
+      // ✅ Send to DeepSeek
       const response = await axios.post(
         'https://api.deepseek.com/v1/chat/completions',
         {
@@ -69,7 +64,6 @@ Keep it short, clean, and structured for ADHD learners.`
 
       const result = response.data.choices[0].message.content;
 
-      // ✅ Email config
       const transporter = nodemailer.createTransport({
         service: 'gmail',
         auth: {
@@ -78,7 +72,6 @@ Keep it short, clean, and structured for ADHD learners.`
         }
       });
 
-      // ✅ 1. Email to admin
       await transporter.sendMail({
         from: process.env.MAIL_USER,
         to: process.env.MAIL_USER,
@@ -86,13 +79,12 @@ Keep it short, clean, and structured for ADHD learners.`
         html: `<p>New notes were submitted by: <strong>${email}</strong></p>`,
         attachments: [
           {
-            filename: uploadedFile.originalFilename || 'uploaded_notes.pdf',
+            filename: uploadedFile.originalFilename || 'notes.pdf',
             content: pdfBuffer
           }
         ]
       });
 
-      // ✅ 2. Email to user with AI results
       await transporter.sendMail({
         from: process.env.MAIL_USER,
         to: email,
