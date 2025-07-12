@@ -30,19 +30,18 @@ export default async function handler(req, res) {
     }
 
     try {
-      const pdfBuffer = fs.readFileSync(uploadedFile.filepath);
+          const pdfBuffer = fs.readFileSync(uploadedFile.filepath);
+    const pdfUint8 = new Uint8Array(pdfBuffer); // ✅ fix for Vercel/pdfjs-dist
+    const loadingTask = getDocument({ data: pdfUint8 });
+    const pdf = await loadingTask.promise;
 
-      // ✅ Extract text using pdfjs-dist
-      const loadingTask = getDocument({ data: pdfBuffer });
-      const pdf = await loadingTask.promise;
-
-      let extractedText = '';
-      for (let i = 0; i < pdf.numPages; i++) {
-        const page = await pdf.getPage(i + 1);
-        const content = await page.getTextContent();
-        const text = content.items.map(item => item.str).join(' ');
-        extractedText += text + '\n';
-      }
+    let extractedText = '';
+    for (let i = 0; i < pdf.numPages; i++) {
+      const page = await pdf.getPage(i + 1);
+      const content = await page.getTextContent();
+      const text = content.items.map(item => item.str).join(' ');
+      extractedText += text + '\n';
+    }
 
       // ✅ Send to DeepSeek
       const response = await axios.post(
