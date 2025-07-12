@@ -1,10 +1,8 @@
 import formidable from 'formidable';
 import fs from 'fs';
-import pdfParse from 'pdf-parse';
-import axios from 'axios/dist/node/axios.cjs';
+import { getDocument } from 'pdfjs-dist/legacy/build/pdf.js';
+import axios from 'axios';
 import nodemailer from 'nodemailer';
-
-process.env.PDFJS_NO_EXTERNALS = 'true'; // Prevent test file error on Vercel
 
 export const config = {
   api: {
@@ -31,10 +29,19 @@ export default async function handler(req, res) {
     }
 
     try {
-      // ✅ Extract real text with pdf-parse
       const pdfBuffer = fs.readFileSync(uploadedFile.filepath);
-      const parsed = await pdfParse(pdfBuffer);
-      const extractedText = parsed.text;
+
+      // ✅ Extract text using pdfjs-dist
+      const loadingTask = getDocument({ data: pdfBuffer });
+      const pdf = await loadingTask.promise;
+
+      let extractedText = '';
+      for (let i = 0; i < pdf.numPages; i++) {
+        const page = await pdf.getPage(i + 1);
+        const content = await page.getTextContent();
+        const text = content.items.map(item => item.str).join(' ');
+        extractedText += text + '\n';
+      }
 
       // ✅ Send to DeepSeek
       const response = await axios.post(
@@ -74,6 +81,7 @@ Keep it short, clean, and structured for ADHD learners.`
         }
       });
 
+      // Admin email
       await transporter.sendMail({
         from: process.env.MAIL_USER,
         to: process.env.MAIL_USER,
@@ -87,6 +95,7 @@ Keep it short, clean, and structured for ADHD learners.`
         ]
       });
 
+      // User email
       await transporter.sendMail({
         from: process.env.MAIL_USER,
         to: email,
