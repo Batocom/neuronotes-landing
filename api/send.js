@@ -2,6 +2,7 @@ import formidable from 'formidable';
 import fs from 'fs';
 import pdfjsLib from 'pdfjs-dist/legacy/build/pdf.js';
 const { getDocument } = pdfjsLib;
+pdfjsLib.GlobalWorkerOptions.workerSrc = null; // ✅ Disable worker (fix for Vercel)
 import axios from 'axios';
 import nodemailer from 'nodemailer';
 
