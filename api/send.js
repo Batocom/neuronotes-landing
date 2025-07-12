@@ -4,6 +4,8 @@ import pdfParse from 'pdf-parse';
 import axios from 'axios/dist/node/axios.cjs';
 import nodemailer from 'nodemailer';
 
+process.env.PDFJS_NO_EXTERNALS = 'true'; // Prevent test file error on Vercel
+
 export const config = {
   api: {
     bodyParser: false
