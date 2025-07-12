@@ -32,9 +32,12 @@ export default async function handler(req, res) {
 
     try {
           const pdfBuffer = fs.readFileSync(uploadedFile.filepath);
-    const pdfUint8 = new Uint8Array(pdfBuffer); // ✅ fix for Vercel/pdfjs-dist
-    const loadingTask = getDocument({ data: pdfUint8 });
-    const pdf = await loadingTask.promise;
+          const pdfUint8 = new Uint8Array(pdfBuffer);
+          const loadingTask = getDocument({
+            data: pdfUint8,
+            disableWorker: true // ✅ Works in Vercel
+          });
+          const pdf = await loadingTask.promise;
 
     let extractedText = '';
     for (let i = 0; i < pdf.numPages; i++) {
