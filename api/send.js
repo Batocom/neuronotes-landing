@@ -1,3 +1,4 @@
+// @ts-ignore
 import formidable from 'formidable';
 import fs from 'fs';
 import pdfParse from '@francisneuronotes/pdf-parse';
