@@ -31,7 +31,7 @@ export default async function handler(req, res) {
     try {
       // ✅ Extract text with pdf-parse
       const buffer = fs.readFileSync(uploadedFile.filepath);
-      const parsed = await pdfParse(new Uint8Array(pdfbuffer));
+      const parsed = await pdfParse(new Uint8Array(buffer));
       const extractedText = parsed.text || '';
 
       // ✅ Send to DeepSeek API
