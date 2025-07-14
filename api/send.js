@@ -1,6 +1,6 @@
 import formidable from 'formidable';
 import fs from 'fs';
-import pdfParse from 'pdf-parse'; // ✅ no worker issues
+import pdfParse from '@batocomneuronotes/pdf-parse';
 import axios from 'axios';
 import nodemailer from 'nodemailer';
 

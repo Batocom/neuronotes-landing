@@ -19,10 +19,10 @@
   "homepage": "https://github.com/Batocom/neuronotes-landing#readme",
   "description": "AI study assistant",
   "dependencies": {
+    "@francisneuronotes/pdf-parse": "file:packages/pdf-parse",
     "axios": "^1.10.0",
     "formidable": "^3.5.4",
     "nodemailer": "^7.0.5",
-    "pdf-lib": "^1.17.1",
-    "pdf-parse": "^1.1.1"
+    "pdf-lib": "^1.17.1"
   }
 }
