@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>🔐 Login / Sign Up - NeuroNotes</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <h2>Welcome to NeuroNotes 🧠</h2>
+
+  <div id="authForm">
+  <input type="email" id="email" placeholder="Email" /><br><br>
+  <input type="password" id="password" placeholder="Password" /><br><br>
+
+  <button onclick="login()">🔓 Login</button>
+  <button onclick="signup()">🆕 Sign Up</button>
+  <br><br>
+  <button onclick="googleLogin()">🔵 Sign in with Google</button>
+</div>
+
+  <p id="message"></p>
+
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+
+  <!-- Firebase Config -->
+  <script src="js/firebase.js"></script>
+
+  <!-- Auth Logic -->
+  <script src="js/auth.js"></script>
+</body>
+</html>
